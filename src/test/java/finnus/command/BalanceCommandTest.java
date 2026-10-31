@@ -1,3 +1,4 @@
+//@@author lololol8484
 package finnus.command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -157,3 +158,4 @@ class BalanceCommandTest {
     }
     //@@author
 }
+//@@author

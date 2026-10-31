@@ -419,6 +419,7 @@ class ParserTest {
         assertThrows(FinNusException.class, () -> Parser.parse(input));
     }
 
+    //@@author lololol8484
     @Test
     public void parse_categoryWithoutNameListsAndWithNameAdds() throws FinNusException {
         TransactionList transactions = new TransactionList();
@@ -442,7 +443,9 @@ class ParserTest {
         Parser.parse("category Gym").execute(transactions, ui);
         assertEquals(List.of("Gym"), transactions.getCategories().getCustom());
     }
+    //@@author nabijonzzz
 
+    //@@author lololol8484
     @ParameterizedTest
     @ValueSource(strings = {"add", "list"})
     public void parse_categoryNameMatchingFormerSubcommand_addsCategory(String name) throws FinNusException {
@@ -458,13 +461,13 @@ class ParserTest {
 
         assertEquals(List.of(name), transactions.getCategories().getCustom());
     }
+    //@@author nabijonzzz
 
+    //@@author lololol8484
     @Test
     public void parse_oldCategoryAddSyntax_isRejected() {
         assertThrows(FinNusException.class, () -> Parser.parse("category add Gym"));
     }
-    //@@author
-
     //@@author nabijonzzz
     @Test
     public void parse_findWithPhrase_returnsFindCommand() throws FinNusException {

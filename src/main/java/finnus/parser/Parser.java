@@ -146,7 +146,6 @@ public class Parser {
      */
     public static Command parse(String input, LocalDate today) throws FinNusException {
         assert today != null : "Today's date must not be null";
-        //@@author
         String trimmed = input.trim();
         // Split into the command word and everything after it (which may be empty).
         String[] parts = trimmed.split("\\s+", 2);
@@ -560,6 +559,7 @@ public class Parser {
         return new DateAndRest(date, dateAndRest[1]);
     }
 
+    //@@author lololol8484
     /**
      * Parses {@code category} to list categories or {@code category NAME} to add one.
      */
@@ -571,6 +571,7 @@ public class Parser {
         checkCategoryName(name);
         return new CategoryCommand(name);
     }
+    //@@author
 
     /**
      * Checks that a category name is one word made of letters, digits and '-', so it

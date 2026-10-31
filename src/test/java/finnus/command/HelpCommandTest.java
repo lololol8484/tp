@@ -69,7 +69,6 @@ class HelpCommandTest {
                 .filter(line -> line.startsWith("|"))
                 .skip(1)
                 .toList();
-        //@@author lololol8484
         CommandWord[] commands = java.util.Arrays.stream(CommandWord.values())
                 .filter(command -> command != CommandWord.OPENING)
                 .toArray(CommandWord[]::new);

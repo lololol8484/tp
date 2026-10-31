@@ -167,6 +167,7 @@ public class TransactionList {
         return subList;
     }
 
+    //@@author lololol8484
     /**
      * Deletes the transaction at the given zero-based index and returns it.
      *
@@ -183,6 +184,7 @@ public class TransactionList {
                 : "Deleting a transaction must preserve chronological order";
         return removed;
     }
+    //@@author
 
     /** Returns the starting balance before any transactions are applied. */
     public Money getOpeningBalance() {

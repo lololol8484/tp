@@ -1,3 +1,4 @@
+//@@author lololol8484
 package finnus.command;
 
 import java.util.logging.Logger;
@@ -51,3 +52,4 @@ public class DeleteCommand extends Command {
         ui.showMessage("Transaction deleted: " + deletedTransaction);
     }
 }
+//@@author

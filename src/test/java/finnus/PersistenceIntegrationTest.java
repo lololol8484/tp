@@ -131,6 +131,7 @@ class PersistenceIntegrationTest {
     }
     //@@author
 
+    //@@author lololol8484
     @Test
     public void run_setupConfirmation_persistsOpeningBalanceAndSkipsSetupNextTime() {
         Path path = directory.resolve("finnus.txt");
@@ -148,6 +149,8 @@ class PersistenceIntegrationTest {
         assertFalse(nextRun.output().contains("First-time setup"));
     }
 
+    //@@author
+    //@@author lololol8484
     @Test
     public void run_interruptedSetup_keepsPendingMarkerAndRepeatsSetup() throws IOException {
         Path path = directory.resolve("finnus.txt");
@@ -160,6 +163,7 @@ class PersistenceIntegrationTest {
         assertFalse(new FileStorage(path).load().setupRequired());
         assertEquals(Money.of("67"), new FileStorage(path).load().snapshot().openingBalance());
     }
+    //@@author
 
     @Test
     public void run_corruptFileAndReadOnlyCommands_leavesRepairFileUntouched() throws IOException {

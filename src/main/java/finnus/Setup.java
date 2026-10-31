@@ -18,13 +18,17 @@ import finnus.ui.Ui;
  * Guides a first-time user through choosing and confirming the opening balance,
  * then optionally setting up their monthly allowance.
  */
+//@@author lololol8484
 public class Setup {
+    //@@author nkyjStar
     private static final Logger logger = Logger.getLogger(Setup.class.getName());
+    //@@author lololol8484
 
     private enum Confirmation {
         CONFIRMED, NOT_CONFIRMED
     }
 
+    //@@author chancheese
     /**
      * Runs setup using the real current date.
      *
@@ -33,6 +37,7 @@ public class Setup {
     public boolean run(Ui ui, TransactionList transactions) {
         return run(ui, transactions, LocalDate.now());
     }
+    //@@author lololol8484
 
     /**
      * Prompts for an opening balance until the user confirms it or input ends, then asks
@@ -43,7 +48,9 @@ public class Setup {
      * @param today The current date, used to work out the allowance cycle.
      * @return {@code true} if the user confirmed a balance; {@code false} if input ended first.
      */
+    //@@author chancheese
     public boolean run(Ui ui, TransactionList transactions, LocalDate today) {
+        //@@author lololol8484
         assert ui != null : "UI must not be null";
         assert transactions != null : "Transaction list must not be null";
         assert transactions.size() == 0 : "First-run setup must not start with transactions";
@@ -52,14 +59,18 @@ public class Setup {
         while (true) {
             String input = ui.readCommand("Opening balance (SGD): ");
             if (input == null) {
+                //@@author nkyjStar
                 logger.fine("First-run setup ended before an opening balance was entered");
+                //@@author lololol8484
                 return false;
             }
             Money amount;
             try {
                 amount = Parser.parseNonNegativeAmount(input.trim(), "AMOUNT");
             } catch (FinNusException e) {
+                //@@author nkyjStar
                 logger.fine("Rejected invalid opening balance during setup");
+                //@@author lololol8484
                 ui.showError(e.getMessage());
                 continue;
             }
@@ -74,10 +85,12 @@ public class Setup {
             new OpeningBalanceCommand(amount).execute(transactions, ui);
             assert transactions.getOpeningBalance().compareTo(amount) == 0
                     : "Setup must store the entered opening balance";
+            //@@author nkyjStar
             logger.info("First-run opening balance confirmed");
+            //@@author lololol8484
             //@@author chancheese
             askForAllowance(ui, transactions, today);
-            //@@author
+            //@@author lololol8484
             return true;
         }
     }
@@ -135,7 +148,7 @@ public class Setup {
     private interface AnswerParser<T> {
         T parse(String text) throws FinNusException;
     }
-    //@@author
+    //@@author lololol8484
 
     /** Repeats the confirmation prompt until the user answers yes or no. */
     private Optional<Confirmation> confirmBalance(Ui ui, Money amount) {
@@ -143,7 +156,9 @@ public class Setup {
             String answer = ui.readCommand("Confirm opening balance "
                     + amount.format() + " SGD? [yes/no]: ");
             if (answer == null) {
+                //@@author nkyjStar
                 logger.fine("First-run setup ended before the opening balance was confirmed");
+                //@@author lololol8484
                 return Optional.empty();
             }
             switch (answer.trim().toLowerCase(Locale.ROOT)) {
@@ -151,7 +166,9 @@ public class Setup {
                 return Optional.of(Confirmation.CONFIRMED);
             }
             case "no", "n" -> {
+                //@@author nkyjStar
                 logger.fine("User requested another opening balance entry");
+                //@@author lololol8484
                 return Optional.of(Confirmation.NOT_CONFIRMED);
             }
             default -> ui.showError("Please answer yes or no.");
@@ -159,3 +176,4 @@ public class Setup {
         }
     }
 }
+//@@author

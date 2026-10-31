@@ -350,19 +350,22 @@ collects and confirms this value once, before normal commands become available.
 After the opening balance is confirmed, `Setup` also asks for the allowance day and its SGD amount. Pressing Enter (or
 input ending) skips either one, and setup still counts as complete. See
 [Setting a monthly allowance](#setting-a-monthly-allowance).
-<!-- @@author lololol8484 -->
 
 `opening` is marked as setup-only in `CommandWord`, so typing it in the normal command loop is
-treated as an unknown command. `SetupTest` covers valid and invalid amounts, confirmation,
-re-entry, and input ending before confirmation.
+treated as an unknown command.
+<!-- @@author lololol8484 -->
+`SetupTest` covers valid and invalid amounts, confirmation, re-entry, and input ending before
+confirmation.
 <!-- @@author -->
 
 <!-- @@author chancheese -->
 ### Applying the confirmed opening balance
 
 `OpeningBalanceCommand#execute()` stores the confirmed amount with
-`TransactionList#setOpeningBalance()`. This command was implemented separately from the setup
-flow.
+`TransactionList#setOpeningBalance()`.
+<!-- @@author lololol8484 -->
+This command was implemented separately from the setup flow.
+<!-- @@author chancheese -->
 
 The opening balance is a separate field in `TransactionList`, not a `Transaction`.
 `getBalance()` uses it as the starting value when adding up all transactions:
@@ -663,8 +666,10 @@ because the record is inconsistent.
 ### Categorising spending
 
 Every withdrawal belongs to exactly one category, given with `t/CATEGORY` (e.g. `withdraw 4.50 d/Lunch t/food`).
+<!-- @@author lololol8484 -->
 Users can add their own categories with `category NAME` and list all categories with `category`. A name may be `add` or
 `list`; these are treated as category names, not subcommands.
+<!-- @@author nabijonzzz -->
 
 #### Classes involved
 
@@ -672,7 +677,9 @@ Users can add their own categories with `category NAME` and list all categories 
   a category ignoring case, and returns it in the spelling it was created with.
 * `TransactionList` owns the `CategoryList`, in the same way it owns `CurrencyRates`.
 * `Transaction` has a `category` field: the category name for a withdrawal, and `null` for a deposit.
+<!-- @@author lololol8484 -->
 * `CategoryCommand` handles both `category NAME` and `category`.
+<!-- @@author nabijonzzz -->
 
 The class diagram below shows how these classes are related. Only the members relevant to categories are shown.
 
@@ -729,7 +736,9 @@ field of its `TRANSACTION` record (empty for a deposit), e.g. `TRANSACTION|WITHD
 
 **Aspect: how to handle unknown categories**
 
+<!-- @@author lololol8484 -->
 * **Alternative 1 (current choice):** reject them, and require `category NAME` to create a new one.
+<!-- @@author nabijonzzz -->
   * Pros: a typo such as `t/fod` cannot silently create a new category and split the user's spending.
   * Cons: using a new category takes one extra command.
 * **Alternative 2:** create a new category automatically.

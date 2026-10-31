@@ -31,7 +31,6 @@ public record LedgerSnapshot(Money openingBalance, List<StoredTransaction> trans
      * Copies mutable collections and rejects values that cannot represent a valid ledger.
      */
     public LedgerSnapshot {
-        //@@author
         assert transactions != null : "Transactions must not be null";
         assert rates != null : "Rates must not be null";
         //@@author naieel04
@@ -51,7 +50,6 @@ public record LedgerSnapshot(Money openingBalance, List<StoredTransaction> trans
                 throw new IllegalArgumentException("Unknown category " + category);
             }
         }
-        //@@author
         //@@author chancheese
         if (allowance != null) {
             validateAllowance(allowance.day(), allowance.amount(), allowance.currencyCode(),

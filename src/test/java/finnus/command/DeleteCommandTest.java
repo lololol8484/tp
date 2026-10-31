@@ -1,3 +1,4 @@
+//@@author lololol8484
 package finnus.command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -162,3 +163,4 @@ class DeleteCommandTest {
         return output.toString(StandardCharsets.UTF_8);
     }
 }
+//@@author

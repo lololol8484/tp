@@ -14,7 +14,6 @@ public record LoadResult(LedgerSnapshot snapshot, List<String> warnings, boolean
     public LoadResult(LedgerSnapshot snapshot, List<String> warnings, boolean savingAllowed) {
         this(snapshot, warnings, savingAllowed, false);
     }
-
     //@@author naieel04
     /**
      * Prevents load diagnostics from changing after they are returned to the application.

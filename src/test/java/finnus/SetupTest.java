@@ -13,12 +13,14 @@ import finnus.allowance.Allowance;
 import finnus.money.Money;
 import finnus.transaction.TransactionList;
 
+//@@author lololol8484
 /** Checks first-run opening balance entry and confirmation without creating transactions. */
 class SetupTest {
     //@@author chancheese
     private static final LocalDate TODAY = LocalDate.of(2026, 10, 29);
     //@@author
 
+    //@@author lololol8484
     @Test
     public void run_confirmedAmount_setsOpeningBalanceWithoutTransaction() {
         TransactionList transactions = new TransactionList();
@@ -84,6 +86,7 @@ class SetupTest {
         assertEquals(Money.of("20"), transactions.getOpeningBalance());
         assertEquals(0, transactions.size());
     }
+    //@@author
 
     //@@author chancheese
     @Test
@@ -139,3 +142,4 @@ class SetupTest {
     }
     //@@author
 }
+//@@author

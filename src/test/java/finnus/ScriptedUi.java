@@ -23,10 +23,12 @@ class ScriptedUi extends Ui {
         return commands.poll();
     }
 
+    //@@author lololol8484
     @Override
     public String readCommand(String prompt) {
         return readCommand();
     }
+    //@@author
 
     @Override
     public void showMessage(String... lines) {

@@ -65,6 +65,7 @@ public class LedgerCodec {
         //@@author
         /** The save file exists, but first-run setup has not been confirmed. */
         SETUP_PENDING,
+        //@@author naieel04
         /** Every non-blank record was valid. */
         CLEAN,
         /** Some records were recovered, but at least one warning was produced. */
@@ -139,10 +140,12 @@ public class LedgerCodec {
         return encoded;
     }
 
+    //@@author lololol8484
     /** Encodes the persistent state used while first-run setup is incomplete. */
     public String encodeSetupPending() {
         return HEADER + '\n' + SETUP_PENDING + '\n';
     }
+    //@@author naieel04
 
     //@@author naieel04
     /**
@@ -186,6 +189,7 @@ public class LedgerCodec {
     }
 
     //@@author
+    //@@author lololol8484
     /** Checks whether the only non-blank record after the header marks interrupted setup. */
     private boolean isSetupPending(List<String> lines) {
         List<String> records = lines.subList(1, lines.size()).stream()
@@ -193,6 +197,7 @@ public class LedgerCodec {
                 .toList();
         return records.size() == 1 && SETUP_PENDING.equals(records.getFirst().trim());
     }
+    //@@author naieel04
 
     /** Dispatches one delimited line to the parser for its record type. */
     //@@author naieel04

@@ -2,7 +2,6 @@
 package finnus.command;
 
 import java.util.ArrayList;
-//@@author lololol8484
 import java.util.Arrays;
 //@@author naieel04
 import java.util.List;
@@ -38,7 +37,6 @@ public class HelpCommand extends Command {
 
     /** Builds an ASCII table with lines no wider than 80 columns. */
     private static String[] createHelpLines() {
-        //@@author lololol8484
         List<CommandWord> availableCommands = Arrays.stream(CommandWord.values())
                 .filter(CommandWord::isAvailableAfterSetup)
                 .toList();
@@ -51,7 +49,6 @@ public class HelpCommand extends Command {
         lines.add(border);
         lines.add(String.format(ROW_FORMAT, COMMAND_HEADER, DESCRIPTION_HEADER, SYNTAX_HEADER));
         lines.add(border);
-        //@@author lololol8484
         for (CommandWord command : availableCommands) {
             //@@author naieel04
             addWrappedRow(lines, command.getWord(), command.getDescription(), command.getUsage());
@@ -107,7 +104,6 @@ public class HelpCommand extends Command {
         return index < lines.size() ? lines.get(index) : "";
     }
 
-    //@@author lololol8484
     /** Displays the command reference generated from {@link CommandWord}. */
     //@@author naieel04
     @Override

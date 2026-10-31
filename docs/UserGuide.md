@@ -25,9 +25,11 @@ FinNUS is a desktop finance tracker designed for tech-savvy university students 
 FinNUS automatically saves transactions, the opening balance, and exchange rates whenever they change. The main save
 file is `finnus.txt`, with the previous saved state kept in `finnus.txt.bak`.
 
+<!-- @@author lololol8484 -->
 On a first run with no existing ledger or backup, FinNUS creates a pending setup file and asks for an opening balance.
 The balance is saved only after you confirm it. If you exit or input ends before confirmation, the pending setup state
 remains and FinNUS asks you to complete setup the next time you run it.
+<!-- @@author -->
 
 If a data row is corrupt, FinNUS skips it and reports a warning; the recovered ledger may be incomplete.
 If the main file is unusable, FinNUS tries its backup. If neither can be recovered, it starts with an empty ledger in memory and leaves the original file untouched until data changes.
@@ -107,8 +109,10 @@ The first time you run FinNUS, it asks how much money you currently have, so you
 * Answer `yes` (or `y`) to confirm, or `no` (or `n`) to enter a different amount.
 * The opening balance is not a transaction, so it does not show up in `recent` and cannot be removed with `delete`.
 * The ledger is not changed until you confirm. An invalid confirmation answer repeats the confirmation prompt.
+<!-- @@author lololol8484 -->
 * If you close the application or input ends before confirmation, setup is incomplete and will resume the next time you
   run FinNUS.
+<!-- @@author -->
 * After confirmation, FinNUS asks about your [allowance](#setting-your-monthly-allowance-allowance), which you can
   skip, and then normal commands begin. Afterwards, `opening` is not a command.
 
@@ -268,10 +272,13 @@ you can then use with `t/`.
 Formats: `category` or `category NAME`
 
 * `NAME` is one word made of letters, digits and `-`, at most 20 characters, e.g. `Gym` or `bubble-tea`.
+<!-- @@author nabijonzzz -->
 * `NAME` must not already exist, ignoring case. For example, `category FOOD` is rejected because `Food` exists.
+<!-- @@author lololol8484 -->
 * `add` and `list` are valid category names when entered alone: `category add` creates `add`, and `category list` creates `list`.
 
 Example: `category Gym`, then `withdraw 30 d/Membership t/gym`
+<!-- @@author nabijonzzz -->
 ```
 ____________________________________________________________
 Category added: #Gym
