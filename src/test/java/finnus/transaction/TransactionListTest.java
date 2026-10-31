@@ -1,5 +1,6 @@
 package finnus.transaction;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,6 +61,59 @@ public class TransactionListTest {
         List<Transaction> recentTransactions = transactions.getRecentTransactions(2);
         assertEquals(2, recentTransactions.size());
     }
+
+    //@@author lololol8484
+    @Test
+    public void add_backdatedAndUndatedTransactions_keepsChronologicalOrder() {
+        TransactionList list = new TransactionList();
+        Transaction sameDayFirst = datedDeposit("Same day first", "2026-10-15");
+        Transaction sameDaySecond = datedDeposit("Same day second", "2026-10-15");
+        Transaction latest = datedDeposit("Latest", "2026-10-20");
+        Transaction earlier = datedDeposit("Earlier", "2026-10-10");
+        Transaction undatedFirst = new Transaction(TransactionType.DEPOSIT, Money.of("1"), "Undated first");
+        Transaction undatedSecond = new Transaction(TransactionType.DEPOSIT, Money.of("1"), "Undated second");
+
+        list.add(sameDayFirst);
+        list.add(latest);
+        list.add(undatedFirst);
+        list.add(earlier);
+        list.add(sameDaySecond);
+        list.add(undatedSecond);
+
+        assertEquals(List.of(undatedFirst, undatedSecond, earlier, sameDayFirst, sameDaySecond, latest),
+                list.getAll());
+    }
+
+    @Test
+    public void getRecentTransactions_backdatedSameDayAndUndatedEntries_ordersAsSpecified() {
+        TransactionList list = new TransactionList();
+        Transaction sameDayFirst = datedDeposit("Same day first", "2026-10-15");
+        Transaction sameDaySecond = datedDeposit("Same day second", "2026-10-15");
+        Transaction latest = datedDeposit("Latest", "2026-10-20");
+        Transaction earlier = datedDeposit("Earlier", "2026-10-10");
+        Transaction undatedFirst = new Transaction(TransactionType.DEPOSIT, Money.of("1"), "Undated first");
+        Transaction undatedSecond = new Transaction(TransactionType.DEPOSIT, Money.of("1"), "Undated second");
+        list.add(sameDayFirst);
+        list.add(latest);
+        list.add(undatedFirst);
+        list.add(earlier);
+        list.add(sameDaySecond);
+        list.add(undatedSecond);
+
+        assertEquals(List.of(latest, sameDaySecond, sameDayFirst, earlier, undatedSecond, undatedFirst),
+                list.getRecentTransactions(list.size()));
+        assertEquals(List.of(latest, sameDaySecond, sameDayFirst), list.getRecentTransactions(3));
+    }
+
+    @Test
+    public void add_nullTransaction_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> new TransactionList().add(null));
+    }
+
+    private Transaction datedDeposit(String description, String date) {
+        return new Transaction(TransactionType.DEPOSIT, Money.of("1"), description, null, LocalDate.parse(date));
+    }
+    //@@author
 
     @Test
     public void getRecentTransactions_noTransactionsMade_returnsEmptyList() {

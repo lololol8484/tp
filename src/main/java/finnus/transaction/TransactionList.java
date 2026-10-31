@@ -2,23 +2,36 @@ package finnus.transaction;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import finnus.allowance.Allowance;
 import finnus.category.CategoryList;
 import finnus.currency.CurrencyRates;
 import finnus.money.Money;
 
+//@@author lololol8484
 /**
- * Holds all recorded transactions in the order they were added (oldest first),
- * together with the opening balance the ledger starts from.
+ * Holds recorded transactions chronologically by date (oldest first), together with the
+ * opening balance the ledger starts from. Undated legacy transactions come before dated ones.
  * Other features (balance, recent, delete, storage) should read and modify
  * transactions only through this class.
  */
+//@@author
 public class TransactionList {
+    private static final Logger logger = Logger.getLogger(TransactionList.class.getName());
 
     private final List<Transaction> transactions = new ArrayList<>();
+
+    //@@author lololol8484
+    /** Sorts undated legacy transactions first, followed by dates from oldest to newest. */
+    private static final Comparator<Transaction> CHRONOLOGICAL_ORDER = Comparator.comparing(
+            (Transaction transaction) -> transaction.getDate().orElse(null),
+            Comparator.nullsFirst(Comparator.naturalOrder()));
+    //@@author
 
     /**
      * The money the user had before recording any transactions, in SGD.
@@ -48,12 +61,28 @@ public class TransactionList {
     private Allowance allowance;
     //@@author
 
-    /** Adds a transaction at the end of the ledger, preserving entry order. */
+    //@@author lololol8484
+    /** Inserts a transaction by date, keeping earlier entries first and same-day entries stable. */
     public void add(Transaction transaction) {
+        Objects.requireNonNull(transaction, "Transaction must not be null");
         int oldSize = transactions.size();
-        transactions.add(transaction);
+        int insertionIndex = 0;
+        while (insertionIndex < transactions.size()
+                && CHRONOLOGICAL_ORDER.compare(transactions.get(insertionIndex), transaction) <= 0) {
+            insertionIndex++;
+        }
+        transactions.add(insertionIndex, transaction);
         assert transactions.size() == oldSize + 1 : "Adding a transaction must increase the list size";
+        assert insertionIndex == 0
+                || CHRONOLOGICAL_ORDER.compare(transactions.get(insertionIndex - 1), transaction) <= 0
+                : "Transaction must not precede the prior chronological entry";
+        assert insertionIndex == transactions.size() - 1
+                || CHRONOLOGICAL_ORDER.compare(transaction, transactions.get(insertionIndex + 1)) <= 0
+                : "Transaction must not follow the next chronological entry";
+        logger.fine("Inserted transaction at chronological position " + insertionIndex
+                + " for " + transaction.getDate().map(Object::toString).orElse("an undated entry"));
     }
+    //@@author
 
     /**
      * Returns the transaction at the given zero-based index.
@@ -145,9 +174,13 @@ public class TransactionList {
      * @return The deleted transaction.
      */
     public Transaction delete(int index) {
+        assert index >= 0 && index < transactions.size() : "Transaction index must be within the list";
         int oldSize = transactions.size();
         Transaction removed = transactions.remove(index);
         assert transactions.size() == oldSize - 1 : "Deleting a transaction must reduce the list size";
+        assert index == 0 || index == transactions.size()
+                || CHRONOLOGICAL_ORDER.compare(transactions.get(index - 1), transactions.get(index)) <= 0
+                : "Deleting a transaction must preserve chronological order";
         return removed;
     }
 

@@ -266,7 +266,9 @@ transactions are stored and where the balance is calculated.
   overrides `execute(TransactionList, Ui)`.
 * `Transaction` is an immutable record of one money movement. It stores a `TransactionType`
   (`DEPOSIT` or `WITHDRAWAL`), a positive `Money` amount and a description.
-* `TransactionList` holds all transactions in the order they were added.
+<!-- @@author lololol8484 -->
+* `TransactionList` keeps transactions chronologically by date, with undated legacy transactions first internally.
+<!-- @@author Nabijon Nazarov -->
 
 #### How a withdrawal is processed
 
@@ -409,10 +411,12 @@ validation and deletion behavior.
 
 #### Design considerations
 
-The transaction list remains in insertion order, oldest first. `delete` translates the
-newest-first index displayed to the user instead of rearranging stored transactions. This keeps
-adding a transaction as a simple append while making deletion indices consistent with `recent`
-and `find`.
+<!-- @@author lololol8484 -->
+`TransactionList` stores dated transactions from oldest to newest and keeps undated legacy entries at the start.
+Transactions entered on the same date retain their entry order internally. `recent` and `find` traverse the list in
+reverse, so the newest date and most recently entered same-day transaction appear first. `delete` translates the
+displayed index to the matching position in the sorted list. A backdated addition may shift the indices of other
+transactions; users should check the current `recent` or `find` output before deleting.
 <!-- @@author -->
 
 ### Setting exchange rates
@@ -462,11 +466,10 @@ Otherwise, the parser converts the argument to an `int` and rejects a malformed 
 length with `FinNusException`. The main loop shows that exception as an error and continues.
 
 The command's `execute()` method requests the selected entries from
-`TransactionList#getRecentTransactions(length)`. `TransactionList` stores entries in insertion
-order, oldest first. It finds the first selected position using
-`max(0, size - length)`, takes the sublist through the end, and returns its reversed, read-only
-view. This handles a request longer than the ledger without a separate error case. If the ledger
-is empty, it returns an empty list before attempting a sublist.
+`TransactionList#getRecentTransactions(length)`. `TransactionList` stores dated entries oldest first, with undated
+legacy entries before them, and inserts each new entry at its date-sorted position. It takes the last `length`
+entries and returns them in reverse order. This handles a request longer than the ledger without a separate error
+case. If the ledger is empty, it returns an empty list before attempting a sublist.
 
 The command then numbers the returned entries starting at 1 and uses `Transaction#toString()`
 for each line. The heading reports how many entries were actually returned, which can be less
@@ -489,12 +492,12 @@ newest-first result, not permanent transaction IDs. Adding or deleting an entry 
 
 #### Design considerations
 
-Keeping the TransactionList in insertion order makes recording a transaction a simple append. Reversing
-only the selected sublist gives `recent` the order users need without rearranging stored data.
-Another approach would store transactions newest first, but then every feature that assumes
-insertion order would need to account for that choice. `getRecentTransactions()` returns a
-read-only view so callers can display entries without directly editing the ledger. The command
-only formats data; it does not add, remove or change transactions.
+<!-- @@author lololol8484 -->
+Keeping the TransactionList in date order makes backdated entries appear in their chronological position and ensures
+`recent`, `find`, and `delete` use the same ordering. Same-date transactions retain their entry order internally,
+while the reversed view shows the newest entry first. `getRecentTransactions()` returns a read-only view, and the
+command only formats data; it does not add, remove or change transactions.
+<!-- @@author nkyjStar -->
 
 <!-- @@author nabijonzzz -->
 ### Finding transactions
@@ -506,8 +509,11 @@ whole phrase, and returns a `FindCommand`. A missing keyword is rejected with th
 
 `FindCommand#execute()` goes through the `TransactionList` from the newest transaction to the oldest, and keeps the
 ones whose description contains the keyword. Each result is numbered with the same index that `recent` shows and
-`delete` expects. For a transaction at position `i` in the list (oldest first, starting from 0), that index is
-`size - i`. For example, with 4 transactions, the newest one (position 3) has index 1:
+`delete` expects.
+<!-- @@author lololol8484 -->
+For a transaction at position `i` in the list (undated legacy entries first, then dated entries oldest first), its
+index is `size - i`. For example, with 4 dated transactions, the newest one (position 3) has index 1:
+<!-- @@author nabijonzzz -->
 
 ```
 find lunch
@@ -792,12 +798,13 @@ the parser, so a hand-edited file cannot load a date that a command would reject
 
 **Aspect: order of transactions entered with an earlier date**
 
-* **Alternative 1 (current choice):** keep the order they were entered in.
-  * Pros: the indices shown by `recent` and used by `delete` never shift when a transaction is backdated.
-  * Cons: the list is not always in date order.
-* **Alternative 2:** insert transactions in date order.
-  * Pros: the list reads like a bank statement.
-  * Cons: adding one transaction could change the index of others, so `delete` might remove the wrong one.
+<!-- @@author lololol8484 -->
+* **Alternative 1 (current choice):** insert each transaction into the list by its date.
+  * Pros: `recent` and `find` reflect the actual dates, including backdated transactions.
+  * Cons: adding a backdated transaction can shift displayed indices, so users need to check the current list before deleting.
+* **Alternative 2:** keep transactions in entry order and sort only when displaying them.
+  * Pros: adding a transaction never changes the underlying order.
+  * Cons: every feature that displays or deletes transactions must independently apply the same date ordering.
 <!-- @@author -->
 
 <!-- @@author chancheese -->
@@ -924,6 +931,12 @@ Loading returns a `LoadResult` containing the recovered snapshot, warnings, savi
 required. A partially valid main file contributes its valid rows directly; the backup is considered only when the main
 file is missing or unrecoverable. Invalid UTF-8 counts as damaged data, whereas other read failures disable saving to
 protect data that could not be inspected.
+
+<!-- @@author lololol8484 -->
+`LedgerSnapshot#toTransactionList()` restores each decoded transaction through `TransactionList#add()`, so an
+unsorted `finnus.txt` still starts with the transactions arranged by date. A later successful save writes the sorted
+order. Simply starting the program and running read-only commands does not rewrite the file.
+<!-- @@author naieel04 -->
 
 ![Decisions for loading the main file, recovering a backup, and requesting setup](images/StorageRecoveryActivityDiagram.png)
 

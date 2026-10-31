@@ -206,7 +206,7 @@ public record LedgerSnapshot(Money openingBalance, List<StoredTransaction> trans
 
     //@@author naieel04
     /**
-     * Builds a fresh mutable ledger in the original transaction order.
+     * Builds a fresh mutable ledger with transactions ordered chronologically by date.
      */
     public TransactionList toTransactionList() {
         TransactionList ledger = new TransactionList();

@@ -300,8 +300,16 @@ Format: `deposit AMOUNT [d/DESCRIPTION] on/DATE` or `withdraw AMOUNT d/DESCRIPTI
 * `DATE` must be on or after `2000-01-01`.
 * `DATE` cannot be in the future, since you can only record money that has already moved.
 * `on/DATE` can be given anywhere after the command word, but only once. It works together with `c/` and `t/`.
-* `recent` still lists transactions in the order you entered them, so an earlier date does not change the numbers
-  used by `delete`.
+<!-- @@author lololol8484 -->
+* Transactions are stored in calendar-date order; FinNUS does not record the time of day. `recent` and `find` show
+  the newest dates first. For transactions on the same date, the most recently entered appears first. Undated
+  transactions from older save files appear after dated transactions, with the most recently entered undated
+  transaction first.
+* Adding a backdated transaction can change the numbers shown by `recent` and `find`, so check the current list before
+  using an index with `delete`.
+* If transaction rows in `finnus.txt` are out of date order, FinNUS sorts them in memory when it starts. The file is
+  rewritten in that order the next time FinNUS saves a change; a read-only run leaves the file as it was.
+<!-- @@author nabijonzzz -->
 * Transactions saved by older versions of FinNUS have no date, and are shown without one.
 * Because `on/` marks the date, a word starting with `on/` cannot be used inside a description.
 
